@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pastel Chat App</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Font Awesome Icons & Emoji Picker Library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js" type="module"></script>
+</head>
+<body>
+
+  <!-- ================= AUTH CONTAINER ================= -->
+  <div id="auth-container" class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="logo">
+          <i class="fa-solid fa-comments"></i>
+        </div>
+        <h2>PastelChat</h2>
+        <p>Connect with your friends seamlessly</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button id="tab-login" class="tab-btn active" onclick="switchAuthTab('login')">Login</button>
+        <button id="tab-signup" class="tab-btn" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
+        <div class="input-group">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" id="login-email" placeholder="Email Address" required />
+        </div>
+        <div class="input-group">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" id="login-password" placeholder="Password" required />
+        </div>
+        <button type="submit" class="pastel-btn primary">Login</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signup-form" class="auth-form hidden" onsubmit="handleSignup(event)">
+        <div class="input-group">
+          <i class="fa-solid fa-user"></i>
+          <input type="text" id="signup-name" placeholder="Full Name" required />
+        </div>
+        <div class="input-group">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" id="signup-email" placeholder="Email Address" required />
+        </div>
+        <div class="input-group">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" id="signup-password" placeholder="Password" required />
+        </div>
+        <button type="submit" class="pastel-btn primary">Create Account</button>
+      </form>
+
+      <!-- Guest Login Divider & Button -->
+      <div class="auth-divider">
+        <span>or</span>
+      </div>
+      <button type="button" class="pastel-btn guest" onclick="handleGuestLogin()">
+        <i class="fa-solid fa-user-secret"></i> Continue as Guest
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ================= CHAT CONTAINER ================= -->
+  <div id="chat-container" class="chat-wrapper hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="user-profile">
+        <div class="avatar" id="current-user-avatar">U</div>
+        <div class="user-info">
+          <h3 id="current-user-name">User Name</h3>
+          <span class="status online"><i class="fa-solid fa-circle"></i> Online</span>
+        </div>
+        <div class="profile-actions">
+          <button class="icon-btn" title="Toggle Theme" onclick="toggleTheme()">
+            <i id="theme-icon" class="fa-solid fa-moon"></i>
+          </button>
+          <button class="icon-btn logout-btn" title="Logout" onclick="handleLogout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="sidebar-tabs">
+        <button id="tab-users-btn" class="s-tab active" onclick="switchSidebarTab('users')">Users</button>
+        <button id="tab-activity-btn" class="s-tab" onclick="switchSidebarTab('activity')">Activity Log</button>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="search-input" placeholder="Search..." onkeyup="filterList()" />
+      </div>
+
+      <!-- Users List Panel -->
+      <div id="users-panel" class="panel-content active">
+        <ul id="users-list" class="list-container">
+          <!-- Dynamically populated -->
+        </ul>
+      </div>
+
+      <!-- Activity Logs Panel -->
+      <div id="activity-panel" class="panel-content">
+        <ul id="activity-list" class="list-container activity-logs">
+          <!-- Dynamically populated -->
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Chat Window -->
+    <main class="chat-main">
+      <!-- Active Receiver Header -->
+      <header class="chat-header">
+        <div class="chat-user-details">
+          <div class="avatar" id="chat-user-avatar">?</div>
+          <div>
+            <h3 id="chat-user-name">Select a conversation</h3>
+            <span id="chat-user-status" class="status-text">Choose a contact to start messaging</span>
+          </div>
+        </div>
+        <div class="chat-actions">
+          <button class="icon-btn" title="Voice Call" onclick="startCall('audio')">
+            <i class="fa-solid fa-phone"></i>
+          </button>
+          <button class="icon-btn" title="Video Call" onclick="startCall('video')">
+            <i class="fa-solid fa-video"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Messages Stream -->
+      <div id="messages-container" class="messages-area">
+        <div class="empty-chat-placeholder">
+          <i class="fa-regular fa-paper-plane"></i>
+          <p>Select a user from the sidebar to start chatting</p>
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div id="typing-indicator" class="typing-indicator hidden">
+        <span id="typing-username">User</span> is typing<span class="dots">...</span>
+      </div>
+
+      <!-- Chat Footer / Input -->
+      <footer class="chat-footer">
+        <!-- Emoji Picker Container -->
+        <div id="emoji-picker-wrapper" class="emoji-picker-container hidden">
+          <emoji-picker id="emoji-picker"></emoji-picker>
+        </div>
+
+        <button class="icon-btn" id="emoji-toggle-btn" title="Add Emoji" onclick="toggleEmojiPicker()">
+          <i class="fa-regular fa-face-smile"></i>
+        </button>
+        
+        <input 
+          type="text" 
+          id="message-input" 
+          placeholder="Type a message..." 
+          autocomplete="off" 
+          oninput="handleTyping()" 
+          onkeypress="handleKeyPress(event)" 
+        />
+
+        <button class="send-btn" onclick="sendMessage()">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </footer>
+    </main>
+  </div>
+
+
+  <!-- ================= CALL OVERLAY MODAL ================= -->
+  <div id="call-modal" class="modal-overlay hidden">
+    <div class="call-card">
+      <div class="call-avatar" id="call-avatar">?</div>
+      <h3 id="call-username">Calling...</h3>
+      <p id="call-type">Voice Call</p>
+      
+      <div class="video-preview-placeholder hidden" id="video-preview">
+        <i class="fa-solid fa-user-large"></i>
+      </div>
+
+      <div class="call-actions">
+        <button class="call-btn mute" title="Mute/Unmute">
+          <i class="fa-solid fa-microphone"></i>
+        </button>
+        <button class="call-btn end" onclick="endCall()" title="End Call">
+          <i class="fa-solid fa-phone-slash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= CONTEXT MENU FOR DELETION ================= -->
+  <div id="message-menu" class="context-menu hidden">
+    <button onclick="deleteForMe()"><i class="fa-solid fa-user-minus"></i> Delete for Me</button>
+    <button id="delete-everyone-btn" onclick="deleteForEveryone()"><i class="fa-solid fa-trash-can"></i> Delete for Everyone</button>
+  </div>
+
+
+  <!-- ================= FIREBASE & MAIN SCRIPT ================= -->
+  <script src="https://www.gstatic.com/firebasejs/13.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/13.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/13.0.0/firebase-database-compat.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
