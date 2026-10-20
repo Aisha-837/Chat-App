@@ -21,8 +21,8 @@
 :root[data-theme="dark"] {
   /* Cotton Candy Dark Theme */
   --pastel-bg: linear-gradient(135deg, #1b1725 0%, #221c35 50%, #291e38 100%);
-  --pastel-card: #282136;
-  --pastel-sidebar: #1e182a;
+  --pastel-card: #87858d;
+  --pastel-sidebar: #786b92;
   --pastel-primary: #ff85a1;
   --pastel-primary-hover: #ff6b8b;
   --pastel-accent: #f72585;
@@ -508,14 +508,66 @@ input {
   flex-shrink: 0;
 }
 
+/* =========================================================
+   MESSAGES AREA & WHATSAPP-STYLE ALIGNMENT FIX
+   ========================================================= */
+
+/* Messages container vertical layout */
 .messages-area {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: flex !important;
+  flex-direction: column !important; /* Messages ko upar se niche align karne ke liye */
+  gap: 14px;
   background: #fffafa;
+}
+
+/* Base Message Row */
+.message-row {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100%; /* Full width container */
+  clear: both;
+}
+
+/* Aapka bheja hua message -> RIGHT SIDE ALIGNED */
+.message-row.sent {
+  align-items: flex-end !important;
+}
+
+.message-row.sent .message-bubble {
+  background: linear-gradient(135deg, #ff85a1, #ff9ebb);
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(255, 133, 161, 0.25);
+  margin-left: auto; /* Right side par push karta hai */
+  max-width: 75%;
+}
+
+/* Doosre user ka aaya hua message -> LEFT SIDE ALIGNED */
+.message-row.received {
+  align-items: flex-start !important;
+}
+
+.message-row.received .message-bubble {
+  background: #e2ece9;
+  color: #1d2d24;
+  border-bottom-left-radius: 4px;
+  border: 1.5px solid #bce1d6;
+  font-weight: 600;
+  margin-right: auto; /* Left side par push karta hai */
+  max-width: 75%;
+}
+
+/* Message Time alignment */
+.message-row.sent .message-time {
+  align-self: flex-end;
+}
+
+.message-row.received .message-time {
+  align-self: flex-start;
 }
 
 .empty-chat-placeholder {
@@ -530,65 +582,6 @@ input {
   font-size: 52px;
   margin-bottom: 12px;
   color: var(--pastel-primary);
-}
-
-/* Message Bubble */
-.message-row {
-  display: flex;
-  flex-direction: column;
-  max-width: 80%;
-  position: relative;
-}
-
-.message-row.sent {
-  align-self: flex-end;
-  align-items: flex-end;
-}
-
-.message-row.received {
-  align-self: flex-start;
-  align-items: flex-start;
-}
-
-.message-bubble {
-  padding: 12px 18px;
-  border-radius: 18px;
-  font-size: 14px;
-  line-height: 1.5;
-  position: relative;
-  word-wrap: break-word;
-  max-width: 100%;
-}
-
-.sent .message-bubble {
-  background: linear-gradient(135deg, #ff85a1, #ff9ebb);
-  color: #ffffff;
-  border-bottom-right-radius: 4px;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(255, 133, 161, 0.25);
-}
-
-.received .message-bubble {
-  background: #e2ece9;
-  color: #1d2d24;
-  border-bottom-left-radius: 4px;
-  border: 1.5px solid #bce1d6;
-  font-weight: 600;
-}
-
-.message-bubble.deleted {
-  font-style: italic;
-  color: var(--text-muted) !important;
-  background: #f0f0f0 !important;
-  border: 1px solid #ddd !important;
-}
-
-.message-time {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 4px;
-  padding: 0 4px;
-  font-weight: 700;
 }
 
 /* Quick Reaction Bar */
